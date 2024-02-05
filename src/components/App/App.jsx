@@ -3,72 +3,59 @@ import Feedback from 'components/Feedback';
 import Notification from 'components/Notification';
 import Section from 'components/Section';
 import Statistics from 'components/Statistics';
-import { Component } from 'react';
+import { useState } from 'react';
 
-const FEEDBACK_VALUE = {
-  GOOD: 'good',
-  NEUTRAL: 'neutral',
-  BAD: 'bad',
-};
+const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-class App extends Component {
-  state = {
-    [FEEDBACK_VALUE.GOOD]: 0,
-    [FEEDBACK_VALUE.NEUTRAL]: 0,
-    [FEEDBACK_VALUE.BAD]: 0,
+  const increase = set => {
+    set(prevState => prevState + 1);
   };
 
-  increase = name => {
-    this.setState(state => ({ ...state, [name]: state[name] + 1 }));
-  };
-
-  countTotalFeedback = (...args) => {
+  const countTotalFeedback = (...args) => {
     return args.reduce((acc, arg) => acc + arg, 0);
   };
 
-  countPositiveFeedbackPercentage = (positiveValue, total) => {
+  const countPositiveFeedbackPercentage = (positiveValue, total) => {
     return ((positiveValue / total) * 100).toFixed(0);
   };
 
-  render() {
-    const total = this.countTotalFeedback(...Object.values(this.state));
-    const positivePercentage = this.countPositiveFeedbackPercentage(
-      this.state[FEEDBACK_VALUE.GOOD],
-      total
-    );
-    const feedbackOptions = Object.keys(this.state);
+  const total = countTotalFeedback(good, neutral, bad);
+  const positivePercentage = countPositiveFeedbackPercentage(good, total);
 
-    const statisticsOptions = Object.keys(this.state).map(key => ({
-      key,
-      value: this.state[key],
-    }));
+  const options = [
+    { option: 'Good', value: good, handler: () => increase(setGood) },
+    { option: 'Neutral', value: neutral, handler: () => increase(setNeutral) },
+    { option: 'Bad', value: bad, handler: () => increase(setBad) },
+  ];
 
-    return (
-      <div>
-        <h1 hidden>User's feedback application</h1>
+  return (
+    <div>
+      <h1 hidden>User's feedback application</h1>
 
-        <Container>
-          <Section title="Please leave feedback">
-            <Feedback buttonHandler={this.increase} options={feedbackOptions} />
-          </Section>
-        </Container>
+      <Container>
+        <Section title="Please leave feedback">
+          <Feedback options={options} />
+        </Section>
+      </Container>
 
-        <Container>
-          <Section title="Statistics">
-            {total > 0 ? (
-              <Statistics
-                total={total}
-                positivePercentage={positivePercentage}
-                options={statisticsOptions}
-              />
-            ) : (
-              <Notification message="There is no feedback yet!" />
-            )}
-          </Section>
-        </Container>
-      </div>
-    );
-  }
-}
+      <Container>
+        <Section title="Statistics">
+          {total > 0 ? (
+            <Statistics
+              total={total}
+              positivePercentage={positivePercentage}
+              options={options}
+            />
+          ) : (
+            <Notification message="There is no feedback yet!" />
+          )}
+        </Section>
+      </Container>
+    </div>
+  );
+};
 
 export default App;

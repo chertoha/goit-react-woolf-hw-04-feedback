@@ -6,9 +6,9 @@ const Statistics = ({ total, positivePercentage, options }) => {
   return (
     <Wrapper>
       <List>
-        {options.map(({ key, value }) => (
-          <Item key={key}>
-            <Stat label={key} value={value} />
+        {options.map(({ option, value }) => (
+          <Item key={option}>
+            <Stat label={option} value={value} />
           </Item>
         ))}
       </List>
@@ -22,9 +22,12 @@ const Statistics = ({ total, positivePercentage, options }) => {
 export default Statistics;
 
 Statistics.propTypes = {
-  good: PropTypes.number.isRequired,
-  neutral: PropTypes.number.isRequired,
-  bad: PropTypes.number.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      option: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
+    })
+  ).isRequired,
   total: PropTypes.number.isRequired,
   positivePercentage: PropTypes.string.isRequired,
 };

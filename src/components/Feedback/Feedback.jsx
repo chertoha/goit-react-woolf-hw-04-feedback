@@ -2,18 +2,13 @@ import PropTypes from 'prop-types';
 import FeedbackButton from './FeedbackButton';
 import { List, Item, Wrapper } from './Feedback.styled';
 
-const Feedback = ({ options, buttonHandler }) => {
+const Feedback = ({ options }) => {
   return (
     <Wrapper>
       <List>
-        {options.map(option => (
+        {options.map(({ option, handler }) => (
           <Item key={option}>
-            <FeedbackButton
-              onClick={() => {
-                buttonHandler(option);
-              }}
-              value={option}
-            />
+            <FeedbackButton onClick={handler} value={option} />
           </Item>
         ))}
       </List>
@@ -24,6 +19,10 @@ const Feedback = ({ options, buttonHandler }) => {
 export default Feedback;
 
 Feedback.propTypes = {
-  options: PropTypes.arrayOf(PropTypes.string).isRequired,
-  buttonHandler: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      option: PropTypes.string.isRequired,
+      handler: PropTypes.func.isRequired,
+    })
+  ).isRequired,
 };
